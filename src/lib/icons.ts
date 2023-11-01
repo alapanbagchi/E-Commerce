@@ -1,0 +1,4 @@
+export const icons = {
+    Home: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21,22H14a1,1,0,0,1-1-1V16a1,1,0,0,0-2,0v5a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V11a1,1,0,0,1,.336-0.747l9-8a1,1,0,0,1,1.328,0l9,8A1,1,0,0,1,22,11V21A1,1,0,0,1,21,22Zm-6-2h5V11.449L12,4.338,4,11.449V20H9V16a3,3,0,0,1,6,0v4Z"></path></svg>`,
+    Listings: `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M13.991,4A3,3,0,1,1,11,7a3,3,0,0,1,2.99-3m0-2a5,5,0,1,0,5,5,4.994,4.994,0,0,0-5-5h0Z"></path><path d="M20,16v4H16V16h4m2-2H14v8h8V14h0Z"></path><path d="M7,13.118L8.6,16H5.4L7,13.118M7,9L2,18H12L7,9H7Z"></path></svg>`
+}
