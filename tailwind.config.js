@@ -12,7 +12,7 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1100px",
+        "2xl": "1660px",
       },
     },
     extend: {
@@ -49,6 +49,14 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        deadline: {
+          DEFAULT: "hsl(var(--deadline))",
+          foreground: "hsl(var(--deadline-foreground))",
+        },
+        score: {
+          DEFAULT: "hsl(var(--score))",
+          foreground: "hsl(var(--score-foreground))",
         },
       },
       borderRadius: {

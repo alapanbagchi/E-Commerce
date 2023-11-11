@@ -1,0 +1,179 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider                         = "npx zod-prisma-types"
+  output                           = "./generated/zod" // default is ./generated/zod
+  useMultipleFiles                 = false // default is false
+  writeBarrelFiles                 = false // default is true
+  createInputTypes                 = false // default is true
+  createModelTypes                 = true // default is true
+  addInputTypeValidation           = false // default is true
+  addIncludeType                   = false // default is true
+  addSelectType                    = false // default is true
+  validateWhereUniqueInput         = true // default is true
+  createOptionalDefaultValuesTypes = false // default is false
+  createRelationValuesTypes        = true // default is false
+  createPartialTypes               = false // default is false
+  useDefaultValidators             = false // default is true
+  coerceDate                       = true // default is true
+  writeNullishInModelTypes         = true // default is false
+}
+
+model User {
+  id            String   @id @default(uuid())
+  fullName      String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  password      String
+  role          String   @default("USER")
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  contestsOrganized  Contest[]
+  grandPrizesWon     GrandPrize[]   @relation("UserGrandPrizes")
+  lotteryPrizesWon   LotteryPrize[] @relation("UserLotteryPrizes")
+  milestonesAchieved Milestone[]    @relation("UserMilestones")
+  faqsAsked          Faq[]
+}
+
+model Contest {
+  id                      String                  @id @default(uuid())
+  organizerId             String
+  organizer               User                    @relation(fields: [organizerId], references: [id])
+  organizer_platform      String? /// @zod.string.url()
+  startDate               DateTime
+  endDate                 DateTime
+  grandPrize              GrandPrize[]
+  lotteryPrize            LotteryPrize[]
+  milestones              Milestone[]
+  open                    Boolean                 @default(true)
+  title                   String /// @zod.string.min(3, { message: "Contest title must be atleast 3 characters long" }).max(255, { message: "Contest title must be smaller than 255 characters" })
+  banner                  String? /// @zod.string
+  type                    ContestType
+  size                    ContestSize
+  rules                   String[] /// @zod.string.array
+  description             String /// @zod.string.min(1, {message: "Contest description is required"})
+  score                   Score[] /// @zod.object.array(.min(1).max(10))
+  target_audience         String? /// @zod.string
+  purpose                 String? /// @zod.string
+  how_to_win              String? /// @zod.string
+  additional_details      String? /// @zod.string
+  tags                    String[] /// @zod.string.array(.min(1, {message: "Tags are required"}).max(5, {message: "You cant use more than 5 tags"}).nonempty())
+  company_name            String /// @zod.string
+  company_link            String? /// @zod.string
+  company_logo            String? /// @zod.string
+  company_description     String? /// @zod.string
+  allowed_countries       String[] /// @zod.string.array
+  additional_requirements String[] /// @zod.string.array
+  announcements           Announcement[]
+  faq                     Faq[]
+  participants            Participant[]
+  payment_status          PaymentStatus
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+
+  @@index([title])
+}
+
+model GrandPrize {
+  id        String  @id @default(uuid())
+  contestId String
+  contest   Contest @relation(fields: [contestId], references: [id])
+  amount    Int
+  winnerId  String?
+  winner    User?   @relation("UserGrandPrizes", fields: [winnerId], references: [id])
+}
+
+model LotteryPrize {
+  id        String  @id @default(uuid())
+  contestId String
+  contest   Contest @relation(fields: [contestId], references: [id])
+  amount    Int
+  winnerId  String?
+  winner    User?   @relation("UserLotteryPrizes", fields: [winnerId], references: [id])
+}
+
+model Milestone {
+  id        String    @id @default(uuid())
+  contestId String
+  contest   Contest   @relation(fields: [contestId], references: [id])
+  same_type Boolean
+  date      DateTime?
+  points    Int?
+  prize     Int?
+  winnerId  String?
+  winner    User?     @relation("UserMilestones", fields: [winnerId], references: [id])
+}
+
+model Score {
+  id             String  @id @default(uuid()) /// @zod.custom.omit([model, input])
+  contestId      String /// @zod.custom.omit([model, input])
+  contest        Contest @relation(fields: [contestId], references: [id])
+  points         Int /// @zod.custom.use(z.coerce.number().min(1, {message: "Points must be atleast 1"}))
+  count          Int /// @zod.custom.use(z.coerce.number().min(1, {message: "Count must be atleast 1"}))
+  measuring_unit String /// @zod.string.min(1, {message: "Measuring unit is required"})
+}
+
+model Announcement {
+  id           String   @id @default(uuid())
+  contestId    String
+  contest      Contest  @relation(fields: [contestId], references: [id])
+  announcement String
+  date         DateTime @default(now())
+}
+
+model Faq {
+  id           String  @id @default(uuid())
+  contestId    String
+  contest      Contest @relation(fields: [contestId], references: [id])
+  questionerId String
+  questioner   User    @relation(fields: [questionerId], references: [id])
+  question     String /// @zod.string
+  answer       String /// @zod.string
+}
+
+model Participant {
+  id              String      @id @default(uuid())
+  contestId       String
+  contest         Contest     @relation(fields: [contestId], references: [id])
+  userScores      UserScore[]
+  lottery_tickets Int
+  last_updated    DateTime
+  alias           String      @default("John Doe")
+  profile         String?
+}
+
+model UserScore {
+  id            String      @id @default(uuid())
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id])
+  category      String
+  value         Int
+  points        Int
+  date          DateTime    @default(now())
+}
+
+enum ContestType {
+  SCORE
+  DEADLINE
+}
+
+enum ContestSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  UNPAID
+}

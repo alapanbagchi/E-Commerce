@@ -6,8 +6,8 @@ import { Means } from '@/lib/fonts';
 const typographyVariants = cva('text-foreground', {
     variants: {
         variant: {
-            h1: 'text-[44px] leading-[48px] font-regular '+Means.className,
-            h1_small: 'text-[24px] leading-[34px] font-regular '+Means.className,
+            h1: 'text-[44px] leading-[48px] font-regular ' + Means.className,
+            h1_small: 'text-[24px] leading-[34px] font-regular ' + Means.className,
             h2: 'text-[36px] leading-[45px]',
             h3: 'text-[28px] leading-[35px]',
             h4: 'text-[20px] leading-[25px]',

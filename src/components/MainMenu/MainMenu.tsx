@@ -12,7 +12,7 @@ export interface ILink {
 }
 
 
-export default () => {
+const MainMenu = () => {
     const path = usePathname()
     const params = useParams()
     const currentPath = path.split(`/me/shops/${params.shopid}/`)[1]?.split('/')[0]
@@ -49,3 +49,5 @@ export default () => {
         </div>
     )
 }
+
+export default MainMenu

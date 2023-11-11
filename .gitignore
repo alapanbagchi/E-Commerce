@@ -6,6 +6,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+# datasets
+/datasets/listings
+
 # testing
 /coverage
 
@@ -19,6 +22,10 @@
 # misc
 .DS_Store
 *.pem
+
+prisma/generated
+prisma/migrations
+.env
 
 # debug
 npm-debug.log*
